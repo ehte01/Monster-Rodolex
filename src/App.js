@@ -1,25 +1,43 @@
-import logo from './logo.svg';
+import { useEffect, useState } from 'react';
 import './App.css';
+import CardList from './components/CardList/CardList';
+import Input from './components/Input/Input';
 
 function App() {
+
+  const [monsters,setMonsters] = useState([]);
+  const [search, setSearch] = useState('');
+  console.log('render');
+  async function getMonsters(){
+    let response = await fetch('https://jsonplaceholder.typicode.com/users');
+    let data = await response.json();
+    setMonsters(data);
+  }
+  useEffect(()=>{
+
+    getMonsters();
+
+  },[setMonsters])
+
+  function inputHandler(e){
+    const value = e.target.value.toLowerCase();
+    setSearch(value);
+  }
+
+  const filterdMonsters = monsters.filter((monster,index)=>{
+      return monster.name.toLowerCase().includes(search);
+    })
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <h2 className='app-title'>Monsters Rodolex</h2>
+      <Input inputHandler={inputHandler}></Input>
+      <CardList monsters={filterdMonsters}></CardList>
+
     </div>
   );
 }
+
 
 export default App;
